@@ -1,11 +1,19 @@
 const User = require("../models/user");
 
+const {
+  badRequestError,
+  notFoundError,
+  serverError,
+} = require("../utils/errors");
+
 // GET USERS
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((e) => {
-      res.status(500).send({ message: "Error from getUsers", e });
+      console.error(e);
+
+      return res.status(serverError).send({ message: "Error from getUsers" });
     });
 };
 
@@ -13,32 +21,41 @@ const getUsers = (req, res) => {
 const getUserById = (req, res) => {
   const { userId } = req.params;
 
-  User.findById({ userId }).then((user) => {
-    res.send({ data: user }).catch((e) => {
-      res.status(500).send({ message: "Error from getUserById", e });
+  User.findById(userId)
+    .orFail()
+    .then((user) => {
+      res.status(200).send({ data: user });
+    })
+    .catch((e) => {
+      console.error(e);
+
+      if (e.name === "DocumentNotFoundError") {
+        return res.status(notFoundError).send({ message: e.message });
+      }
+      if (e.name === "CastError") {
+        return res.status(badRequestError).send({ message: e.message });
+      }
+      return res
+        .status(serverError)
+        .send({ message: "Error from getUserById" });
     });
-  });
 };
 
 // POST USERS
 const createUser = (req, res) => {
-  console.log(req);
-  console.log(req.body);
-
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
     .then((user) => {
-      console.log(user);
-      res.send({ data: user });
+      res.status(201).send({ data: user });
     })
     .catch((e) => {
       console.error(e);
 
       if (e.name === "ValidationError") {
-        res.status(400).send({ message: e.message });
+        res.status(badRequestError).send({ message: e.message });
       } else {
-        res.status(500).send({ message: e.message });
+        res.status(serverError).send({ message: "Error from createUser" });
       }
     });
 };

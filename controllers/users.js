@@ -9,7 +9,7 @@ const {
 // GET USERS
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.send(users))
     .catch((e) => {
       console.error(e);
 
@@ -24,16 +24,16 @@ const getUserById = (req, res) => {
   User.findById(userId)
     .orFail()
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((e) => {
       console.error(e);
 
       if (e.name === "DocumentNotFoundError") {
-        return res.status(notFoundError).send({ message: e.message });
+        return res.status(notFoundError).send({ message: "User not found" });
       }
       if (e.name === "CastError") {
-        return res.status(badRequestError).send({ message: e.message });
+        return res.status(badRequestError).send({ message: "Invalid Data" });
       }
       return res
         .status(serverError)
@@ -53,7 +53,7 @@ const createUser = (req, res) => {
       console.error(e);
 
       if (e.name === "ValidationError") {
-        res.status(badRequestError).send({ message: e.message });
+        res.status(badRequestError).send({ message: "Invalid Data" });
       } else {
         res.status(serverError).send({ message: "Error from createUser" });
       }

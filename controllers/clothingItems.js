@@ -9,7 +9,7 @@ const {
 // GET CLOTHING ITEM
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => res.send(items))
     .catch((e) => {
       console.error(e);
       return res.status(serverError).send({ message: "Error from getItem" });
@@ -28,7 +28,7 @@ const createItem = (req, res) => {
     .catch((e) => {
       console.error(e);
       if (e.name === "ValidationError") {
-        res.status(badRequestError).send({ message: e.message });
+        res.status(badRequestError).send({ message: "Invalid Data" });
       } else {
         res.status(serverError).send({ message: "Error from createItem" });
       }
@@ -41,15 +41,15 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then(() => res.status(200).send({ message: "Item deleted successfully" }))
+    .then(() => res.send({ message: "Item deleted successfully" }))
     .catch((e) => {
       console.error(e);
 
       if (e.name === "DocumentNotFoundError") {
-        return res.status(notFoundError).send({ message: e.message });
+        return res.status(notFoundError).send({ message: "Item not found" });
       }
       if (e.name === "CastError") {
-        return res.status(badRequestError).send({ message: e.message });
+        return res.status(badRequestError).send({ message: "Invalid Data" });
       }
 
       return res.status(serverError).send({ message: "Error from deleteItem" });
@@ -71,10 +71,10 @@ const likeItem = (req, res) => {
       console.error(e);
 
       if (e.name === "DocumentNotFoundError") {
-        return res.status(notFoundError).send({ message: e.message });
+        return res.status(notFoundError).send({ message: "Item not found" });
       }
       if (e.name === "CastError") {
-        return res.status(badRequestError).send({ message: e.message });
+        return res.status(badRequestError).send({ message: "Invalid Data" });
       }
 
       return res.status(serverError).send({ message: "Error from likeItem" });
@@ -96,10 +96,10 @@ const dislikeItem = (req, res) => {
       console.error(e);
 
       if (e.name === "DocumentNotFoundError") {
-        return res.status(notFoundError).send({ message: e.message });
+        return res.status(notFoundError).send({ message: "Item not found" });
       }
       if (e.name === "CastError") {
-        return res.status(badRequestError).send({ message: e.message });
+        return res.status(badRequestError).send({ message: "Invalid Data" });
       }
 
       return res

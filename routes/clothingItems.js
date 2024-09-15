@@ -20,7 +20,7 @@ router.delete("/:itemId", deleteItem);
 // PUT LIKE
 router.put("/:itemId/likes", likeItem);
 
-//DELETE LIKE
+// DELETE LIKE
 router.delete("/:itemId/likes", dislikeItem);
 
 module.exports = router;

@@ -4,6 +4,7 @@ const {
   badRequestError,
   notFoundError,
   serverError,
+  forbiddenError,
 } = require("../utils/errors");
 
 // GET CLOTHING ITEM
@@ -38,10 +39,20 @@ const createItem = (req, res) => {
 // DELETE CLOTHING ITEM
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const userId = req.user._id;
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then(() => res.send({ message: "Item deleted successfully" }))
+    .then((item) => {
+      if (item.owner.toString() !== userId.toString()) {
+        return res
+          .status(forbiddenError)
+          .send({ message: "You are not authorized to delete this item" });
+      }
+      return ClothingItem.findByIdAndDelete(itemId).then(() =>
+        res.send({ message: "Item deleted successfully" })
+      );
+    })
     .catch((e) => {
       console.error(e);
 

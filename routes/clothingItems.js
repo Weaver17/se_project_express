@@ -8,19 +8,21 @@ const {
   dislikeItem,
 } = require("../controllers/clothingItems");
 
+const auth = require("../middlewares/auth");
+
 // GET
 router.get("/", getItems);
 
 // POST
-router.post("/", createItem);
+router.post("/", auth, createItem);
 
 // DELETE
-router.delete("/:itemId", deleteItem);
+router.delete("/:itemId", auth, deleteItem);
 
 // PUT LIKE
-router.put("/:itemId/likes", likeItem);
+router.put("/:itemId/likes", auth, likeItem);
 
 // DELETE LIKE
-router.delete("/:itemId/likes", dislikeItem);
+router.delete("/:itemId/likes", auth, dislikeItem);
 
 module.exports = router;

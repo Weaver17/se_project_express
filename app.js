@@ -6,6 +6,10 @@ const cors = require("cors");
 
 const mainRouter = require("./routes/index");
 
+const limiter = require("./utils/rateLimit");
+
+const helmet = require("helmet");
+
 const { PORT = 3001 } = process.env;
 const app = express();
 
@@ -18,6 +22,8 @@ mongoose
 
 app.use(express.json());
 app.use(cors());
+app.use(helmet());
+app.use(limiter);
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {

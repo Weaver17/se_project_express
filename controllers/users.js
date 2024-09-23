@@ -16,41 +16,6 @@ const {
   unauthorizedError,
 } = require("../utils/errors");
 
-// GET USERS
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch((e) => {
-      console.error(e);
-
-      return res.status(serverError).send({ message: "Error from getUsers" });
-    });
-};
-
-// GET USER VIA ID
-const getUserById = (req, res) => {
-  const { userId } = req.params;
-
-  User.findById(userId)
-    .orFail()
-    .then((user) => {
-      res.send({ data: user });
-    })
-    .catch((e) => {
-      console.error(e);
-
-      if (e.name === "DocumentNotFoundError") {
-        return res.status(notFoundError).send({ message: "User not found" });
-      }
-      if (e.name === "CastError") {
-        return res.status(badRequestError).send({ message: "Invalid Data" });
-      }
-      return res
-        .status(serverError)
-        .send({ message: "Error from getUserById" });
-    });
-};
-
 // POST USERS
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -106,7 +71,7 @@ const getCurrentUser = (req, res) => {
     })
     .catch((e) => {
       console.error(e);
-      if (e.name === "NotFoundError") {
+      if (e.name === "User Not Found") {
         return res.status(notFoundError).send({ message: "User Not Found" });
       }
       return res
@@ -168,7 +133,7 @@ const updateUser = (req, res) => {
     })
     .catch((e) => {
       console.error(e);
-      if (e.name === "NotFoundError") {
+      if (e.name === "Not found") {
         return res.status(notFoundError).send({ message: "User not found" });
       }
       if (e.name === "ValidationError") {
@@ -180,8 +145,6 @@ const updateUser = (req, res) => {
 
 module.exports = {
   createUser,
-  getUsers,
-  getUserById,
   getCurrentUser,
   login,
   updateUser,

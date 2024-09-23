@@ -41,7 +41,7 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId.toString()) {
@@ -49,9 +49,20 @@ const deleteItem = (req, res) => {
           .status(forbiddenError)
           .send({ message: "You are not authorized to delete this item" });
       }
-      return ClothingItem.findByIdAndDelete(itemId).then(() =>
-        res.send({ message: "Item deleted successfully" })
-      );
+
+      return ClothingItem.findByIdAndDelete(itemId)
+        .then(() => res.send({ message: "Item deleted successfully" }))
+        .catch((e) => {
+          console.error(e);
+          if (e.name === "CastError") {
+            return res
+              .status(badRequestError)
+              .send({ message: "Invalid Data" });
+          }
+          return res
+            .status(serverError)
+            .send({ message: "Error from deleteItem" });
+        });
     })
     .catch((e) => {
       console.error(e);

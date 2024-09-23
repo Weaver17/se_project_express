@@ -1,6 +1,6 @@
-const bcrypt = require("bcrypt");
-
 const validator = require("validator");
+
+const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 
@@ -55,33 +55,40 @@ const getUserById = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
-  User.findOne({ email })
+  if (!email) {
+    return res.status(badRequestError).send({ message: "Email required" });
+  }
+  if (!validator.isEmail(email)) {
+    return res.status(badRequestError).send({ message: "Invalid Email" });
+  }
+  if (!validator.isURL(avatar)) {
+    return res.status(badRequestError).send({ message: "Invalid URL" });
+  }
+
+  return User.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new Error("A user with that email already exists");
+        throw new Error("Email already in use");
       }
-      bcrypt
-        .hash(password, 10)
-        .then((hashedPassword) =>
-          User.create({ name, avatar, email, password: hashedPassword })
-        )
-        .then((created) =>
-          res.send({
-            name: created.name,
-            avatar: created.avatar,
-            email: created.email,
-          })
-        );
+      return bcrypt.hash(password, 10);
     })
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then((newUser) =>
+      res.send({
+        name: newUser.name,
+        avatar: newUser.avatar,
+        email: newUser.email,
+      })
+    )
     .catch((e) => {
       console.error(e);
-
       if (e.name === "ValidationError") {
-        res.status(badRequestError).send({ message: "Invalid Data" });
-      } else if (e.message === "A user with that email already exists") {
+        return res.status(badRequestError).send({ message: "Invalid Data" });
+      }
+      if (e.message === "Email already in use") {
         return res
           .status(alreadyExistsError)
-          .send({ message: "A user with that email already exists" });
+          .send({ message: "Email already in use" });
       }
       return res.status(serverError).send({ message: "Error from createUser" });
     });
@@ -113,11 +120,13 @@ const login = (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(badRequestError).send({ message: "Invalid Data" });
+    return res
+      .status(badRequestError)
+      .send({ message: "Incorrect email or password" });
   }
 
   if (!validator.isEmail(email)) {
-    return res.status(badRequestError).send({ message: "Invalid Data" });
+    return res.status(badRequestError).send({ message: "Invalid Email" });
   }
 
   return User.findUserByCredentials(email, password)
@@ -131,13 +140,14 @@ const login = (req, res) => {
     .catch((e) => {
       console.error(e);
       if (e.message === "Incorrect email or password") {
-        return res
+        res
           .status(unauthorizedError)
           .send({ message: "Incorrect email or password" });
+      } else {
+        res.status(serverError).send({
+          message: "Error from login",
+        });
       }
-      return res.status(serverError).send({
-        message: "Error from login",
-      });
     });
 };
 

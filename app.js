@@ -10,6 +10,8 @@ const mainRouter = require("./routes/index");
 
 const limiter = require("./utils/rateLimit");
 
+const errorHandler = require("./middlewares/errorHandler");
+
 const { PORT = 3001 } = process.env;
 const app = express();
 
@@ -25,6 +27,7 @@ app.use(cors());
 app.use(helmet());
 app.use(limiter);
 app.use("/", mainRouter);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

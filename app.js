@@ -6,13 +6,13 @@ const helmet = require("helmet");
 
 const cors = require("cors");
 
+const { errors } = require("celebrate");
+
 const mainRouter = require("./routes/index");
 
 const limiter = require("./utils/rateLimit");
 
 const errorHandler = require("./middlewares/errorHandler");
-
-const { errors } = require("celebrate");
 
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 

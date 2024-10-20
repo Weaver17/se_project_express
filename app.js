@@ -12,6 +12,10 @@ const limiter = require("./utils/rateLimit");
 
 const errorHandler = require("./middlewares/errorHandler");
 
+const { errors } = require("celebrate");
+
+const { requestLogger, errorLogger } = require("./middlewares/logger");
+
 const { PORT = 3001 } = process.env;
 const app = express();
 
@@ -26,7 +30,10 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(limiter);
+app.use(requestLogger);
 app.use("/", mainRouter);
+app.use(errorLogger);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {

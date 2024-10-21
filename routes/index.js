@@ -10,7 +10,6 @@ const { NotFoundError } = require("../errors/NotFoundError");
 
 const {
   validateUserBody,
-  ValidateLogin,
   validateLogin,
 } = require("../middlewares/validation");
 

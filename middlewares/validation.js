@@ -24,7 +24,7 @@ module.exports.validateItemBody = celebrate({
 });
 
 module.exports.validateUserBody = celebrate({
-  body: Joi.object().keys()({
+  body: Joi.object().keys({
     email: Joi.string()
       .required()
       .email()

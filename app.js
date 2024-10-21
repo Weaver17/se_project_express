@@ -8,9 +8,9 @@ const cors = require("cors");
 
 const { errors } = require("celebrate");
 
-const mainRouter = require("./routes/index");
-
 const limiter = require("./utils/rateLimit");
+
+const router = require("./routes/index");
 
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -27,11 +27,11 @@ mongoose
   .catch(console.error);
 
 app.use(express.json());
-app.use(cors());
 app.use(helmet());
-app.use(limiter);
+app.use(cors());
 app.use(requestLogger);
-app.use("/", mainRouter);
+app.use(limiter);
+app.use("/", router);
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);

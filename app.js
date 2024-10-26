@@ -33,6 +33,11 @@ app.use(helmet());
 app.use(cors());
 app.use(requestLogger);
 app.use(limiter);
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
 app.use("/", router);
 app.use(errorLogger);
 app.use(errors());

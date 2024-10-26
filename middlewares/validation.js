@@ -8,7 +8,14 @@ const validateURL = (value, helpers) => {
   return helpers.error("string.uri");
 };
 
-module.exports.validateItemBody = celebrate({
+const validateId = (value, helpers) => {
+  if (validator.isHexadecimal(value)) {
+    return value;
+  }
+  return helpers.error("string.uri");
+};
+
+const validateItemBody = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
       "string-min": 'The minimum length of the "name" field is 2',
@@ -23,7 +30,7 @@ module.exports.validateItemBody = celebrate({
   }),
 });
 
-module.exports.validateUserBody = celebrate({
+const validateUserBody = celebrate({
   body: Joi.object().keys({
     email: Joi.string()
       .required()
@@ -47,7 +54,7 @@ module.exports.validateUserBody = celebrate({
   }),
 });
 
-module.exports.validateLogin = celebrate({
+const validateLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string()
       .required()
@@ -62,8 +69,32 @@ module.exports.validateLogin = celebrate({
   }),
 });
 
-module.exports.validateId = celebrate({
+const validateUserId = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().alphanum().length(24),
+    itemId: Joi.string().length(24).required().custom(validateId).messages({
+      "string.uri": "Must be a hexadecimal value length of 24 characters",
+    }),
   }),
 });
+
+const validateUserUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30).message({
+      "string.min": 'The minimum length of the "name" field is 2',
+      "string.max": 'The maximum length of the "name" field is 30',
+      "string.empty": 'The "name" field must be filled in',
+    }),
+    avatar: Joi.string().required().custom(validateURL).messages({
+      "string.empty": 'The "imageUrl" field must be filled in',
+      "string.uri": 'The "imageUrl" field must be a valid url',
+    }),
+  }),
+});
+
+module.exports = {
+  validateItemBody,
+  validateUserBody,
+  validateLogin,
+  validateUserId,
+  validateUserUpdate,
+};

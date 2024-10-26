@@ -10,19 +10,26 @@ const {
 
 const auth = require("../middlewares/auth");
 
+const {
+  validateItemBody,
+  validateUserId,
+} = require("../middlewares/validation");
+
 // GET
 router.get("/", getItems);
 
+router.use(auth);
+
 // POST
-router.post("/", auth, createItem);
+router.post("/", validateItemBody, createItem);
 
 // DELETE
-router.delete("/:itemId", auth, deleteItem);
+router.delete("/:itemId", validateUserId, deleteItem);
 
 // PUT LIKE
-router.put("/:itemId/likes", auth, likeItem);
+router.put("/:itemId/likes", validateUserId, likeItem);
 
 // DELETE LIKE
-router.delete("/:itemId/likes", auth, dislikeItem);
+router.delete("/:itemId/likes", validateUserId, dislikeItem);
 
 module.exports = router;

@@ -2,9 +2,16 @@
 
 ### Recent Updates
 
-- Middleware
-- User sign up/sign in
-- Authorization
+- Celebrate and Joi
+- Winston and Express-Winston
+- Full Deployement with subdomain
+- Custom server using Nginx and PM2
+
+### Full site
+
+- [WTWR](https://www.wtwr.port0.org/)
+
+- [Frontend repo](https://github.com/Weaver17/se_project_react)
 
 ### Overview
 
@@ -37,6 +44,8 @@ Before committing your code, make sure you edit the file `sprint.txt` in the roo
 - ESlint
 - Git
 - Prettier
+- Nginx
+- PM2
 
 **Future Updates**
 

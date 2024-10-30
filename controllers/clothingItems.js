@@ -16,12 +16,13 @@ const getItems = (req, res, next) => {
 
 // POST CLOTHING ITEM
 const createItem = (req, res, next) => {
-  const { name, weather, imageUrl } = req.body;
+  const { name, imageUrl, weather } = req.body;
   const owner = req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(201).send({ data: item });
+      console.log(req.body, owner);
     })
     .catch((e) => {
       console.error(e);

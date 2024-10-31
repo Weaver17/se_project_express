@@ -4,7 +4,7 @@ const userRouter = require("./users");
 
 const itemRouter = require("./clothingItems");
 
-const { NotFoundError } = require("../errors/NotFoundError");
+const NotFoundError = require("../errors/NotFoundError");
 
 const {
   validateUserBody,
